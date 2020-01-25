@@ -94,18 +94,29 @@ router.patch('/users/me', auth,async (req,res) =>{
         }
     })
     
-    router.delete('/users/me', auth, async(req,res) => {
-        try{
-            // const user =  await User.findByIdAndDelete(req.user._id)
-            // if(!user){
-            //     return res.status(404).send()
-            // }
+    // router.delete('/users/me', auth, async(req,res) => {
+    //     try{
+    //         // const user =  await User.findByIdAndDelete(req.user._id)
+    //         // if(!user){
+    //         //     return res.status(404).send()
+    //         // }
+    //         console.log(req.user)
+    //         await req.user.remove()
+    //         //console.log(req.user)
+    //         res.send(req.user)
+    //     } catch (e){
+    //         res.status(500).send()
+    //     }
+    // })
 
-            await req.user.remove()
+    router.delete('/users/me', auth, async (req, res) => {
+        try {
+            await req.user.deleteOne()
             res.send(req.user)
-        } catch (e){
+        } catch (e) {
             res.status(500).send()
         }
     })
+    
 
 module.exports  = router

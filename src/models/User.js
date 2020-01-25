@@ -42,9 +42,18 @@ userSchema.methods.generateAuthToken = async function () {
        const user = this
        const token = jwt.sign({_id: user._id.toString()}, process.env.JWT_KEY)
        user.tokens = user.tokens.concat({token})
+       console.log(user.tokens)
        await user.save()
        return token
 }
+
+
+//setting up a virtual property
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+})
 
 
 userSchema.methods.toJSON = function () {
@@ -79,6 +88,18 @@ userSchema.pre('save',async function(next) {
     next()
 })
 
+// userSchema.pre('remove', async function (next) {
+//     const user = this
+//     await Task.deleteMany({ owner: user._id })
+//     next()
+// })
+
+// Delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+    const user = this
+    await Task.deleteMany({ owner: user._id })
+    next()
+})
 
 
 const User = mongoose.model('User',userSchema)
